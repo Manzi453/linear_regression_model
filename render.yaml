@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: your-app
+    name: 
     runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd summative/API && pip install -r ../requirements.txt
+    startCommand: cd summative/API && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.6
