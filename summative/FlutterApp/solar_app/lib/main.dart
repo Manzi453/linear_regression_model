@@ -45,7 +45,7 @@ class PredictionPageState extends State<PredictionPage> {
   String result = '';
   Color resultColor = Colors.grey;
 
-  static const String apiUrl = 'http://localhost:8000/predict';  // Change to deployed URL if needed
+  static const String apiUrl = 'http://127.0.0.1:8000/docs';  // Change to deployed URL if needed
 
   Future<void> predict() async {
     if (!_formKey.currentState!.validate()) return;
