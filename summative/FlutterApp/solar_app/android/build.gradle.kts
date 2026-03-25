@@ -1,3 +1,9 @@
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    id("dev.flutter.flutter.gradle.plugin") version "1.0.0" apply false
+}
+
 allprojects {
     repositories {
         google()
@@ -22,3 +28,4 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+

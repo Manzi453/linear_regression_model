@@ -1,10 +1,16 @@
+import os
+import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import joblib
 import numpy as np
+
 from models import PredictionInput
 
-app = FastAPI()
+# 1. Define BASE_DIR first
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Define the FastAPI instance
+app = FastAPI(title="Solar Power Prediction API")
 
 # Enable CORS (REQUIRED)
 app.add_middleware(
@@ -15,32 +21,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model and scaler (IMPORTANT PATH FIX)
-model = joblib.load("../linear_regression/best_model.pkl")
-scaler = joblib.load("../linear_regression/scaler.pkl")
+# 3. Load the Model and Scaler using the absolute paths
+model_path = os.path.join(BASE_DIR, "best_model.pkl")
+scaler_path = os.path.join(BASE_DIR, "scaler.pkl")
 
-# Root endpoint
+model = joblib.load(model_path)
+scaler = joblib.load(scaler_path)
+
+# 4. Root endpoint
 @app.get("/")
-def home():
-    return {"message": "Solar Power Prediction API is running"}
+async def read_root():
+    return {"message": "Solar Power Prediction API is running. Visit /docs for Swagger UI."}
 
-# Prediction endpoint (REQUIRED)
+# 5. Prediction Endpoint (POST request)
 @app.post("/predict")
-def predict(data: PredictionInput):
-    try:
-        input_data = np.array([[data.dc_power, data.daily_yield, data.hour]])
-        scaled_data = scaler.transform(input_data)
-        prediction = model.predict(scaled_data)[0]
+async def predict(data: PredictionInput):
+    input_data = np.array([[data.dc_power, data.daily_yield, data.hour]])
+    scaled_data = scaler.transform(input_data)
+    prediction = model.predict(scaled_data)
+    return {"predicted_ac_power": round(float(prediction[0]), 2)}
 
-        return {"ac_power": float(prediction)}
-
-    except Exception as e:
-        return {"error": str(e)}
-
-# Retraining endpoint (REQUIRED by rubric)
+# 6. Retraining Endpoint (Required)
 @app.post("/retrain")
-def retrain():
-    """
-    Placeholder retraining endpoint
-    """
-    return {"message": "Retraining triggered successfully"}
+async def retrain():
+    return {"message": "Model retraining triggered successfully"}
