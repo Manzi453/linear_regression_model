@@ -3,85 +3,263 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(MaterialApp(home: PredictionPage()));
+  runApp(const SolarPredictorApp());
+}
+
+class SolarPredictorApp extends StatelessWidget {
+  const SolarPredictorApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Solar Power Predictor',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          ),
+        ),
+      ),
+      home: const PredictionPage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }
 
 class PredictionPage extends StatefulWidget {
+  const PredictionPage({super.key});
+
   @override
-  _PredictionPageState createState() => _PredictionPageState();
+  PredictionPageState createState() => PredictionPageState();
 }
 
-class _PredictionPageState extends State<PredictionPage> {
+class PredictionPageState extends State<PredictionPage> {
+  final _formKey = GlobalKey<FormState>();
   final dcController = TextEditingController();
   final yieldController = TextEditingController();
   final hourController = TextEditingController();
 
-  String result = "";
+  bool isLoading = false;
+  String result = '';
+  Color resultColor = Colors.grey;
+
+  static const String apiUrl = 'http://localhost:8000/predict';  // Change to deployed URL if needed
 
   Future<void> predict() async {
-    final url = Uri.parse("https://your-api.onrender.com/predict");
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      isLoading = true;
+      result = '';
+    });
 
     try {
       final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "dc_power": double.parse(dcController.text),
-          "daily_yield": double.parse(yieldController.text),
-          "hour": int.parse(hourController.text),
+          'dc_power': double.parse(dcController.text),
+          'daily_yield': double.parse(yieldController.text),
+          'hour': int.parse(hourController.text),
         }),
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          result = "Prediction: ${data['ac_power']}";
+          result = 'Predicted AC Power: ${data['predicted_ac_power']} kW';
+          resultColor = Colors.green;
         });
       } else {
         setState(() {
-          result = "Error: Invalid input";
+          result = 'API Error: ${response.statusCode}';
+          resultColor = Colors.red;
         });
       }
     } catch (e) {
       setState(() {
-        result = "Error connecting to API";
+        result = 'Connection Error: $e';
+        resultColor = Colors.red;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
       });
     }
+  }
+
+  void clearForm() {
+    dcController.clear();
+    yieldController.clear();
+    hourController.clear();
+    setState(() {
+      result = '';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Solar Power Predictor")),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
+      appBar: AppBar(
+        title: Row(
           children: [
-            TextField(
-              controller: dcController,
-              decoration: InputDecoration(labelText: "DC Power"),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: yieldController,
-              decoration: InputDecoration(labelText: "Daily Yield"),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: hourController,
-              decoration: InputDecoration(labelText: "Hour (0–23)"),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: predict,
-              child: Text("Predict"),
-            ),
-            SizedBox(height: 20),
-            Text(result, style: TextStyle(fontSize: 18)),
+            Icon(Icons.solar_power, color: Colors.yellow),
+            SizedBox(width: 8),
+            Text('Solar Predictor'),
           ],
+        ),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.orange.shade300, Colors.yellow.shade100],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Icon(Icons.solar_power, size: 80, color: Colors.orange.shade700),
+                  SizedBox(height: 16),
+                  Text(
+                    'Enter plant data to predict AC Power',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Colors.blue.shade800,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 32),
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: dcController,
+                            decoration: InputDecoration(
+                              labelText: 'DC Power',
+                              prefixIcon: Icon(Icons.flash_on),
+                              prefixText: ' ',
+                              suffixText: 'kW',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return 'Enter DC Power';
+                              final num = double.tryParse(value);
+                              if (num == null || num <= 0) return 'DC Power must be > 0';
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          TextFormField(
+                            controller: yieldController,
+                            decoration: InputDecoration(
+                              labelText: 'Daily Yield',
+                              prefixIcon: Icon(Icons.trending_up),
+                              prefixText: ' ',
+                              suffixText: 'kWh',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return 'Enter Daily Yield';
+                              final num = double.tryParse(value);
+                              if (num == null || num <= 0) return 'Daily Yield must be > 0';
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          TextFormField(
+                            controller: hourController,
+                            decoration: InputDecoration(
+                              labelText: 'Hour',
+                              prefixIcon: Icon(Icons.schedule),
+                              prefixText: ' ',
+                              suffixText: 'h',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return 'Enter Hour';
+                              final hr = int.tryParse(value);
+                              if (hr == null || hr < 0 || hr > 23) return 'Hour must be 0-23';
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: isLoading ? null : predict,
+                    icon: const Icon(Icons.analytics),
+                    label: Text(isLoading ? 'Predicting...' : 'Predict AC Power'),
+                  ),
+                  SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: clearForm,
+                    icon: const Icon(Icons.clear),
+                    label: const Text('Clear Form'),
+                  ),
+                  if (result.isNotEmpty) ...[
+                    SizedBox(height: 24),
+                    Card(
+                      elevation: 8,
+                      color: resultColor.withValues(alpha: 0.1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Icon(
+                              resultColor == Colors.green ? Icons.check_circle : Icons.error,
+                              color: resultColor,
+                              size: 32,
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                result,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ).copyWith(color: resultColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    dcController.dispose();
+    yieldController.dispose();
+    hourController.dispose();
+    super.dispose();
   }
 }
