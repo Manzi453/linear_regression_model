@@ -1,27 +1,31 @@
 # Linear Regression Model - Solar Power Prediction
 
+## Mission & Problem
+Predict AC power output for solar plant optimization using DC_POWER, DAILY_YIELD, TOTAL_YIELD. Dataset: Plant_1_Generation_Data.csv (Kaggle-like solar inverter data, 68k+ rows).
+
 ## Task 1: Model Training
-- See `summative/linear_regression/multivariate.ipynb`
-- Best model: RandomForestRegressor (multivariate: DC_POWER, DAILY_YIELD, hour)
-- RMSE: ~17.72
-- Saved: `summative/linear_regression/best_model.pkl`, `scaler.pkl`, `features.pkl`
+`summative/linear_regression/multivariate.ipynb`: RandomForest best (RMSE~17), saved pkl files copied to API/.
 
-## Task 2: FastAPI Deployment (COMPLETE)
-**Local:** 
+## Task 2: API (Deployed on Render)
+**Swagger UI:** https://YOUR-RENDER-URL.onrender.com/docs
+
+**Endpoints:**
+- POST /predict: `{"DC_POWER":1000,"DAILY_YIELD":5000,"TOTAL_YIELD":6000000}` → `{"AC_POWER":950.5}`
+- POST /retrain: Triggers retrain on dataset (reloads model)
+- GET /health
+
+**Local Test:**
 ```
-cd summative/API
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
+cd summative/API && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload
+curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{"DC_POWER":1000,"DAILY_YIELD":5000,"TOTAL_YIELD":6000000}'
 ```
-- Visit http://localhost:8000/docs
-- **/predict/**: POST JSON `{"dc_power": 1000, "daily_yield": 500, "hour": 12}` → `{"ac_power": 950.5}`
-- **/retrain/**: POST CSV file (same format as training data)
 
-**Deploy:** Push to GitHub → Render Web Service (Python, `uvicorn main:app --host 0.0.0.0 --port $PORT`)
+**Render Deploy:**
+1. Push repo to GitHub
+2. render.com → New → Web Service → Connect repo
+3. Build: `pip install -r requirements.txt`
+4. Start: `gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app`
 
-## Features
-- Pydantic validation (DC_POWER 0-15000, etc.)
-- CORS enabled
-- Model retraining endpoint
-- Uses trained multivariate model from Task 1
+Rubric: Pydantic constraints, CORS middleware (specific origins), retrain endpoint for new data.
+
+**Task 3:** Flutter app at summative/FlutterApp/solar_app/
