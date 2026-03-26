@@ -1,0 +1,16 @@
+{
+  "best_model_name": "Random Forest",
+  "rows_used": 36827,
+  "source_dataset": "/Users/manziivan453icloud.com/Downloads/Projects/linear_regression_model/summative/linear_regression/Plant_1_Generation_Data.csv",
+  "rmse_by_model": {
+    "Linear Regression": 1.191,
+    "Decision Tree": 1.6936,
+    "Random Forest": 0.683
+  },
+  "trained_at_utc": "2026-03-26T09:21:16.925235+00:00",
+  "selected_features": [
+    "DC_POWER",
+    "DAILY_YIELD",
+    "TOTAL_YIELD"
+  ]
+}
