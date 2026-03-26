@@ -1,16 +1,19 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+import joblib
+import os
 
-class PredictionInput(BaseModel):
-    dc_power: float = Field(..., gt=0, lt=100000, description="DC power output from solar panels (Watts)")
-    daily_yield: float = Field(..., gt=0, lt=1000000, description="Daily energy yield (kWh)")
-    hour: int = Field(..., ge=0, le=23, description="Hour of the day (0-23)")
+BASE_DIR = os.path.dirname(__file__)
 
-class PredictionResponse(BaseModel):
-    predicted_ac_power: float = Field(..., description="Predicted AC power output (kW)")
-    confidence_score: Optional[float] = Field(None, description="Confidence score of prediction")
+MODEL_PATH = os.path.join(BASE_DIR, "best_model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
 
-class RetrainResponse(BaseModel):
-    message: str = Field(..., description="Status message")
-    success: bool = Field(..., description="Whether retraining was successful")
-    metrics: Optional[dict] = Field(None, description="Model performance metrics after retraining")
+def load_model():
+    try:
+        model = joblib.load(MODEL_PATH)
+        return model
+    except Exception as e:
+        raise RuntimeError(f"Error loading model: {e}")
+
+def load_scaler():
+    if os.path.exists(SCALER_PATH):
+        return joblib.load(SCALER_PATH)
+    return None
