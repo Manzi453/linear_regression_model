@@ -6,7 +6,7 @@ void main() {
   test('normalizes a Swagger docs URL into the predict endpoint', () {
     expect(
       resolvePredictApiUri(
-        'https://linearregressionmodel-production-31a6.up.railway.app/docs#/default/predict_predict_post',
+        'https://linear-regression-model-2-twrz.onrender.com/docs#/default/predict_predict_post',
       ).toString(),
       defaultPredictApiUrl,
     );

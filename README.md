@@ -86,10 +86,10 @@ These plots were extracted from the notebook outputs and stored under `summative
 API source folder: `summative/API/`
 
 ### Live Deployment
-- Public Swagger UI: `https://linearregressionmodel-production-31a6.up.railway.app/docs`
-- Prediction endpoint: `https://linearregressionmodel-production-31a6.up.railway.app/predict`
-- Health endpoint: `https://linearregressionmodel-production-31a6.up.railway.app/health`
-- Live docs and prediction endpoint were verified on `2026-03-27`
+- Public Swagger UI: `https://linear-regression-model-2-twrz.onrender.com/docs`
+- Prediction endpoint: `https://linear-regression-model-2-twrz.onrender.com/predict`
+- Health endpoint: `https://linear-regression-model-2-twrz.onrender.com/health`
+- Live Render docs and prediction endpoint were verified on `2026-03-27`
 
 ### Implemented Endpoints
 - `GET /health` returns model metadata, selected features, dataset path, training timestamp, and RMSE values
@@ -145,7 +145,7 @@ The app currently includes:
 - an output panel for the predicted value or validation/error messages
 
 The default app endpoint is already set to the live deployed API:
-- `https://linearregressionmodel-production-31a6.up.railway.app/predict`
+- `https://linear-regression-model-2-twrz.onrender.com/predict`
 
 ### Run the Flutter App
 ```bash
@@ -191,7 +191,6 @@ The video should show:
 
 ### Still Worth Finishing Before Final Submission
 - replace the `TBD` YouTube line with the final public demo link
-- if your lecturer strictly requires Render instead of any public host, mirror or move the live API from Railway to Render
 - the notebook uses an absolute CSV path, so convert it to a relative path before submission if the notebook must run on another machine
 - the notebook's final scatter plot is `Actual vs Predicted`; if your instructor wants a literal regression line drawn over the raw data, add that plot in the notebook
 - the single-row prediction example uses a random sample from `X`; if you want to match the rubric wording exactly, switch it to one row from `X_test`

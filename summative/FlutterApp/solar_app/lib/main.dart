@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 const defaultPredictApiUrl =
-    'https://linearregressionmodel-production-31a6.up.railway.app/predict';
+    'https://linear-regression-model-2-twrz.onrender.com/predict';
 
 Uri resolvePredictApiUri(String rawEndpoint) {
   final trimmed = rawEndpoint.trim();
