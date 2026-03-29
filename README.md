@@ -148,7 +148,7 @@ The app currently includes:
 - an output panel for the predicted value or validation/error messages
 
 The default app endpoint is already set to the live deployed API:
-- `https://linearregressionmodel-production-31a6.up.railway.app/docs`
+- https://linearregressionmodel-production-31a6.up.railway.app/docs
 
 ### Run the Flutter App
 ```bash
