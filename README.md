@@ -86,9 +86,9 @@ These plots were extracted from the notebook outputs and stored under `summative
 API source folder: `summative/API/`
 
 ### Live Deployment
-- Public Swagger UI: `https://linear-regression-model-2-twrz.onrender.com/docs`
-- Prediction endpoint: `https://linear-regression-model-2-twrz.onrender.com/predict`
-- Health endpoint: `https://linear-regression-model-2-twrz.onrender.com/health`
+- Public Swagger UI: `https://linearregressionmodel-production-31a6.up.railway.app/docs#/`
+- Prediction endpoint: `https://linearregressionmodel-production-31a6.up.railway.app/docs#/default/predict_predict_post`
+- Health endpoint: `https://linearregressionmodel-production-31a6.up.railway.app/docs#/default/health_health_get`
 - Live Render docs and prediction endpoint were verified on `2026-03-27`
 
 ### Implemented Endpoints
@@ -145,7 +145,7 @@ The app currently includes:
 - an output panel for the predicted value or validation/error messages
 
 The default app endpoint is already set to the live deployed API:
-- `https://linear-regression-model-2-twrz.onrender.com/predict`
+- `https://linearregressionmodel-production-31a6.up.railway.app/docs`
 
 ### Run the Flutter App
 ```bash
@@ -163,7 +163,7 @@ The app also accepts a Swagger URL and normalizes it to `/predict`.
 
 ## Task 4: Video Demo
 YouTube demo link:
-- `TBD - replace this line with your final public YouTube demo URL before submission`
+- `https://youtu.be/4e3pQLBehRQ`
 
 The video should show:
 - the Flutter app making predictions
