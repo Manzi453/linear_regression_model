@@ -5,6 +5,9 @@ This project predicts solar plant `AC_POWER` from real inverter generation signa
 The goal is to support solar operations by estimating output from `DC_POWER`, `DAILY_YIELD`, and `TOTAL_YIELD`.
 That makes the use case specific to renewable-energy monitoring and deployment.
 
+YouTube demo link:
+https://youtu.be/4e3pQLBehRQ
+
 ## Dataset & Source
 - Public dataset source: Kaggle Solar Power Generation Data, https://www.kaggle.com/datasets/anikannal/solar-power-generation-data
 - Repository copy used in this project: `summative/linear_regression/Plant_1_Generation_Data.csv`
@@ -160,10 +163,6 @@ flutter run --dart-define=PREDICT_API_URL=https://your-api-domain.com/predict
 ```
 
 The app also accepts a Swagger URL and normalizes it to `/predict`.
-
-## Task 4: Video Demo
-YouTube demo link:
-- `https://youtu.be/4e3pQLBehRQ`
 
 The video should show:
 - the Flutter app making predictions
